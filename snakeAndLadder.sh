@@ -57,7 +57,3 @@ do
 
 done
 chancesTakenToWin=${#dieAndPositionRecords[@]}
-for ind in ${!dieAndPositionRecords[@]}
-do
-	echo " die count : $ind		val: ${dieAndPositionRecords[$ind]}"
-done
