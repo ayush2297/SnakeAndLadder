@@ -19,7 +19,11 @@ function checkOptions(){
 		$NO_PLAY)
 			playerPosition=$playerPosition;;
 		$LADDER)
-			playerPosition=$(( $playerPosition + $dieResult ));;
+			if [ $(($playerPosition + $dieResult)) -le $WINNING_POSITION ]	
+			then
+				playerPosition=$(( $playerPosition + $dieResult ))
+			fi
+			;;
 		$SNAKE)
 			playerPosition=$(( $playerPosition - $dieResult ));;
 		*)
@@ -30,7 +34,10 @@ function checkOptions(){
 
 while [ $playerPosition -le $WINNING_POSITION ]
 do
-	if [ $playerPosition -le $INITIAL_PLAYER_POSITION ]
+	if [ $playerPosition -eq $WINNING_POSITION ]
+	then
+		break
+	elif [ $playerPosition -le $INITIAL_PLAYER_POSITION ]
 	then
 		playerPosition=$INITIAL_PLAYER_POSITION
 	fi
