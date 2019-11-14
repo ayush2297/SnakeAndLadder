@@ -35,9 +35,6 @@ function checkOptions(){
 	esac
 }
 
-function incrementByOne(){
-	echo $(( $1 + 1 ))
-}
 
 while [ $playerPosition -le $WINNING_POSITION ]
 do
