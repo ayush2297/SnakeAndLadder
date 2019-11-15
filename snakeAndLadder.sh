@@ -22,25 +22,22 @@ declare dieResult
 declare dieRollCounter=0
 declare playerPosition=0
 declare weHaveAWinner=0
-declare player1CurrentPos=0
-declare player2CurrentPos=0
-declare chancesTakenToWin=0
 declare endTheGame=0
-declare playerThatWon=0
 declare totalChancesPerPlayer=0
 declare currentPositionOfThisPlayer=0
 declare repeatChanceForLadder=0
-declare initialDieRoll=0
 
+#add the details of the chance played to the records array
 function addToRecords(){
 	recordsOfChancesAndPositions[$dieRollCounter]=$playerPosition
 }
 
+#to decide what the player will do after rolling the die
 function checkOptions(){
 	chosenOption=$((RANDOM%3))
 	case $chosenOption in 
 		$NO_PLAY)
-			playerPosition=$playerPosition;;
+			;;
 		$LADDER)
 			repeatChanceForLadder=1
 			if [ $(($playerPosition + $dieResult)) -le $WINNING_POSITION ]	
@@ -59,24 +56,22 @@ function checkOptions(){
       		playerPosition=$INITIAL_PLAYER_POSITION
    		fi
 			;;
-		*)
-			;;
 	esac
-	#addToRecords
 }
 
+#a player plays its chance by rolling a die
 function play(){
    dieResult=$(( $((RANDOM%6)) + 1 ))
    checkOptions
 }
 
+#returns player's current position
 function getCurrentPos(){
 	indexToReturn=$(($player*$(($totalChancesPerPlayer - 1))))
 	echo ${recordsOfChancesAndPositions[$indexToReturn]}
 }
 
 #initialize player positions with initial positions (i.e. 0 )
-#read -p "enter the number of players : " playersCount
 for (( i=1 ; i <= $NO_OF_PLAYERS ; i++ ))
 do
 	playersList[$i]=$INITIAL_PLAYER_POSITION
@@ -91,12 +86,11 @@ do
 		dieRollCounter=$(( $dieRollCounter + 1 ))
 		if [ $totalChancesPerPlayer -eq $ONE ]
 		then
-			currentPositionOfThisPlayer=0			
-		else		
+			currentPositionOfThisPlayer=0
+		else
 			currentPositionOfThisPlayer=$(getCurrentPos $player $totalChancesPerPlayer)
-		fi		
+		fi
 		playerPosition=$currentPositionOfThisPlayer
-		echo position : $playerPosition		
 		play
 		if [ $weHaveAWinner -eq $YES ]
 		then
@@ -109,7 +103,6 @@ do
 		fi
 		if [ $repeatChanceForLadder -eq $YES ]
 	   then
-	#		getCurrPosOffset=$(($getCurrPosOffset+1))
 			totalDieRollOffset=$(($totalDieRollOffset+1))
    	   repeatChanceForLadder=0
    	   play
@@ -118,7 +111,6 @@ do
 	done	
 	if [ $endTheGame -eq $YES ]
 	then
-		sleep 3
 		break
 	fi	
 done
