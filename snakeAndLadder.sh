@@ -45,24 +45,24 @@ function checkOptions(){
 				playerPosition=$(( $playerPosition + $dieResult ))
 			fi
 			if [ $playerPosition -eq $WINNING_POSITION ]
- 	  		then
+			then
 				weHaveAWinner=1
-   		fi
+			fi
 			;;
 		$SNAKE)
 			playerPosition=$(( $playerPosition - $dieResult ))
 			if [ $playerPosition -le $INITIAL_PLAYER_POSITION ]
-   		then
-      		playerPosition=$INITIAL_PLAYER_POSITION
-   		fi
+			then
+				playerPosition=$INITIAL_PLAYER_POSITION
+			fi
 			;;
 	esac
 }
 
 #a player plays its chance by rolling a die
 function play(){
-   dieResult=$(( $((RANDOM%6)) + 1 ))
-   checkOptions
+	dieResult=$(( $((RANDOM%6)) + 1 ))
+	checkOptions
 }
 
 #returns player's current position
@@ -102,11 +102,11 @@ do
 			break
 		fi
 		if [ $repeatChanceForLadder -eq $YES ]
-	   then
+		then
 			totalDieRollOffset=$(($totalDieRollOffset+1))
-   	   repeatChanceForLadder=0
-   	   play
-  		fi
+			repeatChanceForLadder=0
+			play
+		fi
 		addToRecords
 	done	
 	if [ $endTheGame -eq $YES ]
