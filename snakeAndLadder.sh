@@ -18,7 +18,6 @@ declare -a recordsOfChancesAndPositions
 declare -a playersList
 
 #variables
-declare dieResult
 declare dieRollCounter=0
 declare playerPosition=0
 declare weHaveAWinner=0
@@ -35,14 +34,14 @@ function addToRecords(){
 #to decide what the player will do after rolling the die
 function checkOptions(){
 	chosenOption=$((RANDOM%3))
-	case $chosenOption in 
+	case $chosenOption in
 		$NO_PLAY)
 			;;
 		$LADDER)
 			repeatChanceForLadder=1
-			if [ $(($playerPosition + $dieResult)) -le $WINNING_POSITION ]	
+			if [ $(($playerPosition + $1)) -le $WINNING_POSITION ]
 			then
-				playerPosition=$(( $playerPosition + $dieResult ))
+				playerPosition=$(( $playerPosition + $1 ))
 			fi
 			if [ $playerPosition -eq $WINNING_POSITION ]
 			then
@@ -50,7 +49,7 @@ function checkOptions(){
 			fi
 			;;
 		$SNAKE)
-			playerPosition=$(( $playerPosition - $dieResult ))
+			playerPosition=$(( $playerPosition - $1 ))
 			if [ $playerPosition -le $INITIAL_PLAYER_POSITION ]
 			then
 				playerPosition=$INITIAL_PLAYER_POSITION
@@ -61,8 +60,8 @@ function checkOptions(){
 
 #a player plays its chance by rolling a die
 function play(){
-	dieResult=$(( $((RANDOM%6)) + 1 ))
-	checkOptions
+	local dieResult=$(( $((RANDOM%6)) + 1 ))
+	checkOptions $dieResult
 }
 
 #returns player's current position
