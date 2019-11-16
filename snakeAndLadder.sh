@@ -10,7 +10,7 @@ declare NO_PLAY=0
 declare LADDER=1
 declare SNAKE=2
 declare YES=1
-declare ONE=1
+declare INITIAL_CHANCE=1
 
 #arrays and dictionaries
 declare -a recordsOfChancesAndPositions
@@ -101,7 +101,7 @@ function startTheGame()
 	do
 		plNum=$player
 		dieRollCounter=$(( $dieRollCounter + 1 ))
-		if [ $totalChancesPerPlayer -eq $ONE ]
+		if [ $totalChancesPerPlayer -eq $INITIAL_CHANCE ]
 		then
 			currentPositionOfThisPlayer=0
 		else
