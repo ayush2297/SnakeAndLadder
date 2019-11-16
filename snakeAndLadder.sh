@@ -4,7 +4,6 @@ echo "************welcome to the game of snake and ladder**********"
 
 #Constants
 declare NO_OF_PLAYERS=2
-declare INFINITE_LOOP=1
 declare INITIAL_PLAYER_POSITION=0
 declare WINNING_POSITION=100
 declare NO_PLAY=0
@@ -18,17 +17,17 @@ declare -a recordsOfChancesAndPositions
 declare -a playersList
 
 #variables
+declare dieResult=0
 declare dieRollCounter=0
 declare playerPosition=0
 declare weHaveAWinner=0
-declare endTheGame=0
 declare totalChancesPerPlayer=0
 declare currentPositionOfThisPlayer=0
 declare repeatChanceForLadder=0
 
 #add the details of the chance played to the records array
 function addToRecords(){
-	recordsOfChancesAndPositions[$dieRollCounter]=$playerPosition
+	recordsOfChancesAndPositions[$dieRollCounter]=$1
 }
 
 #to decide what the player will do after rolling the die
@@ -39,9 +38,9 @@ function checkOptions(){
 			;;
 		$LADDER)
 			repeatChanceForLadder=1
-			if [ $(($playerPosition + $1)) -le $WINNING_POSITION ]
+			if [ $(( $1 + $2 )) -le $WINNING_POSITION ]
 			then
-				playerPosition=$(( $playerPosition + $1 ))
+				playerPosition=$(( $1 + $2 ))
 			fi
 			if [ $playerPosition -eq $WINNING_POSITION ]
 			then
@@ -49,7 +48,7 @@ function checkOptions(){
 			fi
 			;;
 		$SNAKE)
-			playerPosition=$(( $playerPosition - $1 ))
+			playerPosition=$(( $1 - $2 ))
 			if [ $playerPosition -le $INITIAL_PLAYER_POSITION ]
 			then
 				playerPosition=$INITIAL_PLAYER_POSITION
@@ -60,8 +59,9 @@ function checkOptions(){
 
 #a player plays its chance by rolling a die
 function play(){
-	local dieResult=$(( $((RANDOM%6)) + 1 ))
-	checkOptions $dieResult
+	position=$1
+	dieResult=$(( $((RANDOM%6)) + 1 ))
+	checkOptions $position $dieResult
 }
 
 #returns player's current position
@@ -76,12 +76,30 @@ do
 	playersList[$i]=$INITIAL_PLAYER_POSITION
 done
 
+function checkForLadderRepeatChance(){
+	if [ $1 -eq $YES ]
+	then
+		totalDieRollOffset=$(($totalDieRollOffset+1))
+		repeatChanceForLadder=0
+		play $playerPosition
+		if [ $weHaveAWinner -ne $YES ]
+		then
+			checkForLadderRepeatChance $repeatChanceForLadder
+		fi
+	fi
+}
+
+
 #start gaming simulations of n players
-while [ $INFINITE_LOOP -eq $ONE ]
-do
+function startTheGame()
+{
+	local currentPositionOfThisPlayer=0
+	local endTheGame=0
 	totalChancesPerPlayer=$(($totalChancesPerPlayer+1))
+	#each player gets to play one chance (one by one)
 	for player in ${!playersList[@]}
 	do
+		plNum=$player
 		dieRollCounter=$(( $dieRollCounter + 1 ))
 		if [ $totalChancesPerPlayer -eq $ONE ]
 		then
@@ -90,26 +108,23 @@ do
 			currentPositionOfThisPlayer=$(getCurrentPos $player $totalChancesPerPlayer)
 		fi
 		playerPosition=$currentPositionOfThisPlayer
-		play
+		play $playerPosition
+		checkForLadderRepeatChance $repeatChanceForLadder
 		if [ $weHaveAWinner -eq $YES ]
 		then
-			addToRecords
+			addToRecords $playerPosition
 			playerThatWon=$player
 			chancesTakenToWin=$totalChancesPerPlayer
 			totalTimesDieRolled=$(($dieRollCounter+$totalDieRollOffset))
 			endTheGame=1
 			break
 		fi
-		if [ $repeatChanceForLadder -eq $YES ]
-		then
-			totalDieRollOffset=$(($totalDieRollOffset+1))
-			repeatChanceForLadder=0
-			play
-		fi
-		addToRecords
-	done	
-	if [ $endTheGame -eq $YES ]
+		addToRecords $playerPosition
+	done
+	if [ $endTheGame -ne $YES ]
 	then
-		break
-	fi	
-done
+		startTheGame
+	fi
+}
+
+startTheGame
